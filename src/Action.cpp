@@ -28,8 +28,8 @@
               openApplication(app);
           }
       }
-      else if (response.find("gidiyorum") != std::string::npos || response.find("açıyorum") != std::string::npos &&
-  response.find("http") != std::string::npos) {
+      else if (response.find("gidiyorum") != std::string::npos || (response.find("açıyorum") != std::string::npos &&
+  response.find("http") != std::string::npos)) {
           // Web sitesi açma mantığı
           openWebsite("https://www.google.com"); // Örnek
       }
