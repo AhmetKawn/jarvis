@@ -103,4 +103,4 @@
 
   ---
 
-  Developed with ❤️ by [Ahmet Kaan]
+  Developed with ❤️ by [Ahmet Kaan.Yusuf Erdem]
