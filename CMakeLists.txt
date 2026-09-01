@@ -24,3 +24,6 @@
 
   # CURL kütüphanesini projeye bağla
   target_link_libraries(Jarvis PRIVATE CURL::libcurl)
+  if(WIN32)
+      target_link_libraries(Jarvis PRIVATE ole32 sapi)
+  endif()
