@@ -65,9 +65,9 @@
           return;
       }
 
-      // Ses ayarlarını uygula
-      pVoice->setVolume((LONG)volume * 100);
-      pVoice->setRate(rate);
+      // Ses ayarlarını uygula (SAPI API)
+      pVoice->put_Volume((USHORT)(volume * 100));
+      pVoice->put_Rate(rate);
 
       std::wstring wideText(text.begin(), text.end());
       pVoice->Speak(wideText.c_str(), SPF_DEFAULT, NULL);
@@ -83,8 +83,8 @@
 
   // Diğer set fonksiyonları basitçe değişkenleri günceller
   void Voice::setVoiceType(VoiceType type) { currentType = type; }
-  void Voice::setVolume(float v) { volume = v; }
-  void Voice::setRate(int r) { rate = r; }
+  void Voice::setVolume(float v) { volume = (v < 0.0f) ? 0.0f : (v > 1.0f) ? 1.0f : v; }
+  void Voice::setRate(int r) { rate = (r < -10) ? -10 : (r > 10) ? 10 : r; }
   void Voice::speakPremium(const std::string& text) {
       std::cout << "[Premium] " << text << std::endl; // Buraya API entegrasyonu gelecek
   }
