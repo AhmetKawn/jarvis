@@ -1,29 +1,50 @@
 #ifndef VOICE_HPP
-#define VOICE_HPP
+  #define VOICE_HPP
 
-#include <string>
+  #include <string>
+  #include <queue>
+  #include <mutex>
+  #include <condition_variable>
+  #include <thread>
+  #include <atomic>
 
-enum class VoiceType {
-    LOCAL,   // Windows SAPI (Robotik ama hızlı)
-    PREMIUM  // ElevenLabs/Google (Gerçekçi ama bulut tabanlı)
-};
+  enum class VoiceType {
+      LOCAL,   // Windows SAPI
+      PREMIUM  // ElevenLabs / Google Cloud
+  };
 
-class Voice {
-public:
-    Voice();
-    ~Voice();
+  class Voice {
+  public:
+      Voice();
+      ~Voice();
 
-    void speak(const std::string& text);
-    void setVoiceType(VoiceType type);
+      // Konuşma isteğini kuyruğa ekler (Asenkrondur, programı dondurmaz)
+      void speak(const std::string& text);
 
-private:
-    VoiceType currentType;
+      void setVoiceType(VoiceType type);
+      void setVolume(float volume); // 0.0f ile 1.0f arası
+      void setRate(int rate);       // Konuşma hızı (-10 ile 10 arası)
 
-    // Yerel ses için yardımcı fonksiyon
-    void speakLocal(const std::string& text);
+      // Acil durum: Tüm konuşmaları durdur ve kuyruğu temizle
+      void stopAll();
 
-    // Premium ses için yardımcı fonksiyon
-    void speakPremium(const std::string& text);
-};
+  private:
+      // Ses ayarları
+      VoiceType currentType;
+      float volume = 1.0f;
+      int rate = 0;
 
-#endif
+      // Asenkron yönetim için gerekli bileşenler
+      std::queue<std::string> speechQueue;    // Konuşma sırası
+      std::mutex queueMutex;                  // Kuyruk güvenliği (Thread-safe)
+      std::condition_variable cv;              // Thread uyandırma sinyali
+      std::thread workerThread;               // Arka plan konuşma işçisi
+      std::atomic<bool> isRunning;            // Sistem çalışma durumu
+
+      // İç işleyiş fonksiyonları
+      void processQueue(); // Arka planda çalışan döngü
+      void speakLocal(const std::string& text);
+      void speakPremium(const std::string& text);
+  };
+
+  #endif
