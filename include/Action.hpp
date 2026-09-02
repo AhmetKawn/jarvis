@@ -24,3 +24,5 @@
       // Komut belirleme yardımcı fonksiyonu
       std::string parseCommand(const std::string& text);
   };
+
+  #endif
